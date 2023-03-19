@@ -49,102 +49,6 @@ const FormTitle = (props) => {
   </div>
 }
 
-const isBlank = (value) => {
-  return value === undefined || value === null || value.length < 1
-}
-
-const ContactNameTextInput = props => {
-  const { fieldValue: defaultFieldValue, onChange } = props
-  const [ fieldValue, setFieldValue ] = React.useState(defaultFieldValue)
-  const [ fieldError, setFieldError ] = React.useState('')
-
-  const onFieldChange = (e) => {
-    const value = e.target.value.trim()
-    setFieldValue(value)
-
-    if (isBlank(value)) {
-      setFieldError('Name is required')
-    } else {
-      setFieldError('')
-      onChange({ id: 'name', value: value })
-    }
-  }
-
-  return <ContactTextInput fieldId="name" fieldLabel="Name" img="user.png" fieldValue={fieldValue} placeholder="Name" fieldError={fieldError} onChange={onFieldChange}/>
-}
-
-const ContactEmailTextInput = props => {
-  const { fieldValue: defaultFieldValue, onChange } = props
-  const [ fieldValue, setFieldValue ] = React.useState(defaultFieldValue)
-  const [ fieldError, setFieldError ] = React.useState('')
-
-  const isEmail = (value) => {
-    return value.match(/^[\w.+\-]+@gmail\.com$/)
-  }
-
-  const onFieldChange = (e) => {
-    const value = e.target.value.trim()
-    setFieldValue(value)
-
-    if (isBlank(value)) {
-      setFieldError('Email is required')
-    } else if (!isEmail(value)) {
-      setFieldError('Email is invalid')
-    } else {
-      setFieldError('')
-      onChange({ id: 'email', value: value })
-    }
-  }
-
-  return <ContactTextInput fieldId="email" fieldLabel="Email" img="email.png" fieldValue={fieldValue} placeholder="Email" fieldError={fieldError} onChange={onFieldChange}/>
-}
-
-const ContactPhoneTextInput = props => {
-  const { fieldValue: defaultFieldValue, onChange } = props
-  const [ fieldValue, setFieldValue ] = React.useState(defaultFieldValue)
-  const [ fieldError, setFieldError ] = React.useState('')
-
-  const isPhoneNumber = (value) => {
-    return value.length <= 12 && value.length >= 8 && value.match(/^08[-\s\./0-9]*$/g)
-  }
-
-  const onFieldChange = (e) => {
-    const value = e.target.value.trim()
-    setFieldValue(value)
-
-    if (isBlank(value)) {
-      setFieldError('Phone is required')
-    } else if (!isPhoneNumber(value)) {
-      setFieldError('Phone number is invalid')
-    } else {
-      setFieldError('')
-      onChange({ id: 'phone', value: value })
-    }
-  }
-
-  return <ContactTextInput fieldId="phone" fieldLabel="Phone" img="phone.png" fieldValue={fieldValue} placeholder="Phone" fieldError={fieldError} onChange={onFieldChange}/>
-}
-
-const ContactCompanyTextInput = props => {
-  const { fieldValue: defaultFieldValue, onChange } = props
-  const [ fieldValue, setFieldValue ] = React.useState(defaultFieldValue)
-  const [ fieldError, setFieldError ] = React.useState('')
-
-  const onFieldChange = (e) => {
-    const value = e.target.value.trim()
-    setFieldValue(value)
-
-    if (isBlank(value)) {
-      setFieldError('Company is required')
-    } else {
-      setFieldError('')
-      onChange({ id: 'company', value: value })
-    }
-  }
-
-  return <ContactTextInput fieldId="company" fieldLabel="Company" img="company.png" fieldValue={fieldValue} placeholder="Company" fieldError={fieldError} onChange={onFieldChange}/>
-}
-
 const ContactTextInput = (props) => {
   const { fieldId, fieldLabel, fieldValue, fieldError, onChange, img, placeholder } = props
   
@@ -158,24 +62,108 @@ const ContactTextInput = (props) => {
   </div>
 }
 
-function ContactsDetailForm({ contact, onNext, onChange }) {
-  const onFieldChange = (field) => {
-    if (field.id == 'name') {
-      contact.name = field.value
-    } else if (field.id == 'email') {
-      contact.email = field.value
-    } else if (field.id == 'phone') {
-      contact.phone = field.value
-    } else if (field.id == 'company') {
-      contact.company = field.value
+function ContactsDetailForm({ name: defaultName, email: defaultEmail, phone: defaultPhone, company: defaultCompany, onNext, onChange }) {
+  const [name, setName] = React.useState(defaultName)
+  const [phone, setPhone] = React.useState(defaultPhone)
+  const [email, setEmail] = React.useState(defaultEmail)
+  const [company, setCompany] = React.useState(defaultCompany)
+  const [nameError, setNameError] = React.useState(null)
+  const [emailError, setEmailError] = React.useState(null)
+  const [phoneError, setPhoneError] = React.useState(null)
+  const [companyError, setCompanyError] = React.useState(null)
+
+  const isBlank = (value) => {
+    return value === undefined || value === null || value.length < 1
+  }
+
+  const onFieldChange = (event) => {
+    const id = event.target.name
+    const value = event.target.value
+    
+    if (id == 'name') {
+      setName(value)
+      validateName(value)
+      onChange(id, value)
+    } else if (id == 'email') {
+      setEmail(value)
+      validateEmail(value)
+      onChange(id, value)
+    } else if (id == 'phone') {
+      setPhone(value)
+      validatePhone(value)
+      onChange(id, value)
+    } else if (id == 'company') {
+      setCompany(value)
+      validateCompany(value)
+      onChange(id, value)
     }
-    onChange('contact', contact)
+  }
+
+  const validateName = (value) => {
+    if (isBlank(value)) {
+      setNameError('Name is required')
+    } else {
+      setNameError(null)
+      return true
+    }
+    return false
+  }
+
+  const isEmail = (value) => {
+    return value.match(/^[\w.+\-]+@gmail\.com$/)
+  }
+
+  const validateEmail = (value) => {
+    if (isBlank(value)) {
+      setEmailError('Email is required')
+    } else if (!isEmail(value)) {
+      setEmailError('Email is invalid')
+    } else {
+      setEmailError(null)
+      return true
+    }
+
+    return false
+  }
+
+  const isPhoneNumber = (value) => {
+    return value.length <= 12 && value.length >= 8 && value.match(/^08[-\s\./0-9]*$/g)
+  }
+
+  const validatePhone = (value) => {
+    if (isBlank(value)) {
+      setPhoneError('Phone number is required')
+    } else if (!isPhoneNumber(value)){
+      setPhoneError('Phone number is invalid')
+    } else {
+      setPhoneError(null)
+
+      return true
+    }
+
+    return false
+  }
+
+  const validateCompany = (value) => {
+    if (isBlank(value)) {
+      setCompanyError('Company is required')
+    } else {
+      setCompanyError(null)
+      return true
+    }
+
+    return false
   }
 
   const onFormSubmit = (e) => {
     e.preventDefault()
-    if (contact.name && contact.email && contact.phone && contact.company) {
-      onNext('contact', contact)
+    const nameValidated = validateName(name)
+    const emailValidated = validateEmail(email)
+    const phoneValidated = validatePhone(phone)
+    const companyValidated = validateCompany(company)
+
+    if (nameValidated, emailValidated, phoneValidated, companyValidated) {
+      onNext('contact', { name: name })
     }
   }
 
@@ -188,10 +176,10 @@ function ContactsDetailForm({ contact, onNext, onChange }) {
           <Separator />
           <FormTitle title="Contacts Detail" desc="Lorem ipsum dolor sit amet consectetur adipisc." />
           <div className="inputs-container mt-32">
-            <ContactNameTextInput fieldValue={contact.name ?? ""} onChange={onFieldChange} />
-            <ContactEmailTextInput fieldValue={contact.email ?? ""} onChange={onFieldChange} />
-            <ContactPhoneTextInput fieldValue={contact.phone ?? ""} onChange={onFieldChange} />
-            <ContactCompanyTextInput fieldValue={contact.company ?? ""} onChange={onFieldChange} />
+            <ContactTextInput fieldId="name" fieldLabel="Name" img="user.png" fieldValue={name} placeholder="Name" fieldError={nameError} onChange={onFieldChange}/>
+            <ContactTextInput fieldId="email" fieldLabel="Email" img="email.png" fieldValue={email} placeholder="Email" fieldError={emailError} onChange={onFieldChange}/>
+            <ContactTextInput fieldId="phone" fieldLabel="Phone" img="phone.png" fieldValue={phone} placeholder="Phone" fieldError={phoneError} onChange={onFieldChange}/>
+            <ContactTextInput fieldId="company" fieldLabel="Company" img="company.png" fieldValue={company} placeholder="Company" fieldError={companyError} onChange={onFieldChange}/>
           </div>
         </div>
       </div>
@@ -218,9 +206,7 @@ const InputCheckbox = props => {
 const ServicesForm = ({ service, onNext, onPrev, onChange:defaultOnChange }) => {
   const onSubmit = (e) => {
     e.preventDefault()
-    if (!isBlank(service)) {
-      onNext('service', service)
-    }
+    onNext('service', service)
   }
 
   const isChecked = (value) => {
@@ -281,9 +267,7 @@ const BudgetForm = ({budget, onChange: defaultOnChange, onNext, onPrev}) => {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    if (!isBlank(budget)) {
-      onNext('budget', budget)
-    }
+    onNext('budget', budget)
   }
 
   return <div className="container">
@@ -353,9 +337,13 @@ const FormHeader = () => {
 
 const MultiForm = () => {
   const [currentStep, setCurrentStep] = React.useState(1)
-  const [contact] = React.useState({})
   const [service, setService] = React.useState("development")
   const [budget, setBudget] = React.useState("50000+")
+
+  const [name, setName] = React.useState('')
+  const [phone, setPhone] = React.useState('')
+  const [email, setEmail] = React.useState('')
+  const [company, setCompany] = React.useState('')
 
   const onPrev = () => {
     setCurrentStep(currentStep - 1)
@@ -370,18 +358,29 @@ const MultiForm = () => {
       setBudget(value)
     } else if (id == 'service') {
       setService(value)
+    } else if (id == 'contact') {
+      setName(value.name)
+      setPhone(value.phone)
+      setEmail(value.email)
+      setCompany(value.company)
+    } else if (id == 'name') {
+      setName(value)
+    } else if (id == 'phone') {
+      setPhone(value)
+    } else if (id == 'email') {
+      setEmail(value)
+    } else if (id == 'company') {
+      setCompany(value)
     }
   }
 
   const onSubmit = () => {
-    alert(JSON.stringify({...contact, service, budget}))
+    alert(JSON.stringify({name, email, phone, company, service, budget}))
   }
 
   switch (currentStep) {
     case 1:
-      return <>
-        <ContactsDetailForm contact={contact} onChange={onChange} onNext={onNext}/>
-      </>
+      return <ContactsDetailForm name={name} email={email} phone={phone} company={company} onChange={onChange} onNext={onNext}/>
     case 2:
       return <ServicesForm service={service} onNext={onNext} onPrev={onPrev} onChange={onChange}/>
     case 3:
