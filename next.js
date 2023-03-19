@@ -354,7 +354,7 @@ const FormHeader = () => {
 const MultiForm = () => {
   const [currentStep, setCurrentStep] = React.useState(1)
   const [contact] = React.useState({})
-  const [service, setService] = React.useState(null)
+  const [service, setService] = React.useState("development")
   const [budget, setBudget] = React.useState("50000+")
 
   const onPrev = () => {
