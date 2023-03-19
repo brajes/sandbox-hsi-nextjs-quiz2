@@ -59,7 +59,7 @@ const ContactNameTextInput = props => {
   const [ fieldError, setFieldError ] = React.useState('')
 
   const onFieldChange = (e) => {
-    const value = e.target.value
+    const value = e.target.value.trim()
     setFieldValue(value)
 
     if (isBlank(value)) {
@@ -83,7 +83,7 @@ const ContactEmailTextInput = props => {
   }
 
   const onFieldChange = (e) => {
-    const value = e.target.value
+    const value = e.target.value.trim()
     setFieldValue(value)
 
     if (isBlank(value)) {
@@ -109,7 +109,7 @@ const ContactPhoneTextInput = props => {
   }
 
   const onFieldChange = (e) => {
-    const value = e.target.value
+    const value = e.target.value.trim()
     setFieldValue(value)
 
     if (isBlank(value)) {
@@ -131,7 +131,7 @@ const ContactCompanyTextInput = props => {
   const [ fieldError, setFieldError ] = React.useState('')
 
   const onFieldChange = (e) => {
-    const value = e.target.value
+    const value = e.target.value.trim()
     setFieldValue(value)
 
     if (isBlank(value)) {
@@ -228,7 +228,7 @@ const ServicesForm = ({ service, onNext, onPrev, onChange:defaultOnChange }) => 
   }
 
   const onChange = (e) => {
-    service = e.target.value
+    service = e.target.value.trim()
     defaultOnChange('service', service)
   }
 
@@ -275,7 +275,7 @@ const BudgetForm = ({budget, onChange: defaultOnChange, onNext, onPrev}) => {
   }
 
   const onChange = (e) => {
-    budget = e.target.value
+    budget = e.target.value.trim()
     defaultOnChange('budget', budget)
   }
 
