@@ -100,8 +100,7 @@ const onNextStep = (step, dispatch) => {
   })
 }
 
-const ContactsDetailForm = () => {
-  const {formData, dispatch} = React.useContext(FormContext)
+const ContactsDetailForm = ({formData, dispatch}) => {
   const nameTextInputRef = React.useRef(null);
   const phoneTextInputRef = React.useRef(null);
   const emailTextInputRef = React.useRef(null);
@@ -219,9 +218,7 @@ const RadioInput = ({ fieldId, fieldName, fieldValue, fieldLabel, isChecked, onC
   </div>
 }
 
-const ServicesForm = () => {
-  const {formData, dispatch} = React.useContext(FormContext)
-
+const ServicesForm = ({formData, dispatch}) => {
   const onSubmit = (e) => {
     e.preventDefault()
     onNextStep(formData.step + 1, dispatch)
@@ -257,9 +254,7 @@ const ServicesForm = () => {
   </div>
 }
 
-const BudgetForm = () => {
-  const {formData, dispatch} = React.useContext(FormContext)
-
+const BudgetForm = ({formData, dispatch}) => {
   const isChecked = (value) => {
     return formData.budget.value == value
   }
@@ -295,9 +290,7 @@ const BudgetForm = () => {
   </div>
 }
 
-const FinalConfirmationForm = () => {
-  const {formData, dispatch} = React.useContext(FormContext)
-  
+const FinalConfirmationForm = ({formData, dispatch}) => {
   const onSubmit = (e) => {
     e.preventDefault()
     let data = {
@@ -414,38 +407,24 @@ const validateInput = (name, value) => {
   return error
 }
 
-const FormContext = React.createContext(null);
-
-const FormProvider = ({children}) => {
-  const [formData, dispatch] = React.useReducer(formReducer, initialState);
-
-  return (
-    <FormContext.Provider value={{formData, dispatch}}>
-      {children}
-    </FormContext.Provider>
-  )
-}
-
 const MultiForm = () => {
-  const {formData} = React.useContext(FormContext)
+  const [formData, dispatch] = React.useReducer(formReducer, initialState);
 
   switch (formData.step) {
     case 1:
-      return <ContactsDetailForm />
+      return <ContactsDetailForm formData={formData} dispatch={dispatch} />
     case 2:
-      return <ServicesForm />
+      return <ServicesForm formData={formData} dispatch={dispatch} />
     case 3:
-      return <BudgetForm />
+      return <BudgetForm formData={formData} dispatch={dispatch} />
     case 4:
-      return <FinalConfirmationForm />
+      return <FinalConfirmationForm formData={formData} dispatch={dispatch} />
   }
 }
 
 const App = () => {
   return (
-    <FormProvider>
-      <MultiForm />
-    </FormProvider>
+    <MultiForm />
   )
 }
 
